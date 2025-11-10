@@ -263,6 +263,26 @@ h1 {
   box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
 }
 
+#victory-restart-btn {
+  padding: 18px 50px;
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+#victory-restart-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+}
+
 /* HUD */
 #hud {
   position: fixed;
@@ -326,8 +346,6 @@ h1 {
     display: none;
   }
 }
-
-/* Add these styles to your existing style/styles.css file */
 
 /* Mode Selection Screen */
 .mode-container {

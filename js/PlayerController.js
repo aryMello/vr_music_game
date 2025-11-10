@@ -92,6 +92,7 @@ class PlayerController {
 
     const rigPos = this.cameraRig.object3D.position;
     const camPos = this.camera.object3D.position;
+    const camRot = this.camera.object3D.rotation;
     
     // Automatic forward movement
     rigPos.z -= this.forwardSpeed;
@@ -109,9 +110,24 @@ class PlayerController {
       playerX = rigPos.x + this.desktopPosition.x;
       playerY = rigPos.y + this.desktopPosition.y;
     } else {
-      // VR mode: use camera head tracking
-      playerX = rigPos.x + camPos.x;
-      playerY = rigPos.y + camPos.y;
+      // VR mode: Convert head rotation to position
+      // Use rotation to move the rig, creating actual movement
+      const sensitivity = 4.0; // How much head tilt affects position
+      
+      // Horizontal movement based on yaw (looking left/right)
+      const yaw = camRot.y;
+      const targetX = -Math.sin(yaw) * sensitivity; // Inverted for correct direction
+      
+      // Vertical movement based on pitch (looking up/down)
+      const pitch = camRot.x;
+      const targetY = Math.sin(pitch) * sensitivity; // Inverted for correct direction
+      
+      // Smooth interpolation for natural feel
+      rigPos.x += (targetX - rigPos.x) * 0.1;
+      rigPos.y += (targetY - rigPos.y) * 0.1;
+      
+      playerX = rigPos.x;
+      playerY = rigPos.y + this.tunnelCenterY;
     }
     
     // Constrain player to tunnel boundaries
@@ -127,16 +143,14 @@ class PlayerController {
       const targetY = Math.sin(angle) * this.tunnelRadius + this.tunnelCenterY;
       
       // Smooth transition back to tunnel boundary
-      playerX = playerX * 0.9 + targetX * 0.1;
-      playerY = playerY * 0.9 + targetY * 0.1;
-      
-      // Update position based on mode
       if (this.mode === 'desktop') {
-        this.desktopPosition.x = playerX - rigPos.x;
-        this.desktopPosition.y = playerY - rigPos.y;
+        this.desktopPosition.x = targetX * 0.9 + this.desktopPosition.x * 0.1;
+        this.desktopPosition.y = (targetY - this.tunnelCenterY) * 0.9 + this.desktopPosition.y * 0.1;
+        rigPos.x = this.desktopPosition.x;
+        rigPos.y = this.desktopPosition.y;
       } else {
-        rigPos.x = playerX - camPos.x;
-        rigPos.y = playerY - camPos.y;
+        rigPos.x = targetX * 0.9 + rigPos.x * 0.1;
+        rigPos.y = (targetY - this.tunnelCenterY) * 0.9 + rigPos.y * 0.1;
       }
     } else {
       // Update rig position in desktop mode
@@ -166,8 +180,8 @@ class PlayerController {
       };
     } else {
       return {
-        x: rigPos.x + camPos.x,
-        y: rigPos.y + camPos.y,
+        x: rigPos.x,
+        y: rigPos.y + this.tunnelCenterY,
         z: rigPos.z + camPos.z
       };
     }

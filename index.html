@@ -1,131 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VR Music Rhythm Runner</title>
+  <title>VR Rhythm Runner</title>
   <link rel="stylesheet" href="style/styles.css">
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 </head>
 <body>
   <!-- UI Overlay -->
   <div id="ui-overlay">
-    <!-- Mode Selection Screen -->
+    <!-- Tela de Seleção de Modo -->
     <div id="mode-select">
-      <h1>🎵 VR RHYTHM RUNNER 🎵</h1>
-      <p class="subtitle">Experience music in a whole new dimension</p>
+      <h1>🎵 VR Rhythm Runner 🎵</h1>
+      <p class="subtitle">Experimente a música em uma nova dimensão</p>
       
       <div class="mode-container">
         <button class="mode-btn" id="vr-mode-btn">
           <span class="mode-icon">🥽</span>
           <div class="mode-info">
-            <div class="mode-title">VR Headset Mode</div>
-            <div class="mode-description">Use head movement to dodge obstacles</div>
-            <div class="mode-controls">Mouse look controls only</div>
+            <div class="mode-title">Modo Headset VR</div>
+            <div class="mode-description">Use o movimento da cabeça para desviar dos obstáculos</div>
+            <div class="mode-controls">Apenas controles de olhar com mouse</div>
           </div>
         </button>
         
         <button class="mode-btn" id="desktop-mode-btn">
           <span class="mode-icon">🖥️</span>
           <div class="mode-info">
-            <div class="mode-title">Desktop Mode</div>
-            <div class="mode-description">Use arrow keys to dodge obstacles</div>
-            <div class="mode-controls">← → ↑ ↓ Arrow Keys</div>
+            <div class="mode-title">Modo Desktop</div>
+            <div class="mode-description">Use as setas do teclado para desviar dos obstáculos</div>
+            <div class="mode-controls">← → ↑ ↓ Setas do Teclado</div>
           </div>
         </button>
       </div>
     </div>
 
-    <!-- Song Selection Screen -->
+    <!-- Tela de Seleção de Música -->
     <div id="song-select" class="hidden">
-      <h1>🎵 SELECT YOUR TRACK 🎵</h1>
-      <p class="subtitle" id="mode-indicator">Mode: Desktop</p>
+      <h1>🎵 ESCOLHA SUA MÚSICA 🎵</h1>
+      <p class="subtitle" id="mode-indicator">Modo: Desktop</p>
       <button class="song-btn" data-song="easy">
         <span class="icon">🎼</span>
         <div class="song-info">
-          <div class="song-title">Chill Vibes</div>
-          <div class="song-difficulty">Easy • Relaxed Tempo</div>
+          <div class="song-title">Vibes Tranquilas</div>
+          <div class="song-difficulty">Fácil • Ritmo Relaxado</div>
         </div>
       </button>
       <button class="song-btn" data-song="medium">
         <span class="icon">🎸</span>
         <div class="song-info">
-          <div class="song-title">Rock Energy</div>
-          <div class="song-difficulty">Medium • Dynamic Beats</div>
+          <div class="song-title">Energia Rock</div>
+          <div class="song-difficulty">Médio • Batidas Dinâmicas</div>
         </div>
       </button>
       <button class="song-btn" data-song="hard">
         <span class="icon">⚡</span>
         <div class="song-info">
-          <div class="song-title">Electronic Storm</div>
-          <div class="song-difficulty">Hard • Intense Rhythm</div>
+          <div class="song-title">Tempestade Eletrônica</div>
+          <div class="song-difficulty">Difícil • Ritmo Intenso</div>
         </div>
       </button>
     </div>
 
     <div id="countdown" class="hidden">
       <div id="countdown-number">3</div>
-      <div id="countdown-text">Get Ready!</div>
+      <div id="countdown-text">Prepare-se!</div>
     </div>
 
     <div id="loading" class="hidden">
       <div class="loading-spinner"></div>
-      <div class="loading-text">Analyzing Music...</div>
+      <div class="loading-text">Analisando Música...</div>
     </div>
 
     <div id="game-over" class="hidden">
-      <h1>💥 GAME OVER 💥</h1>
+      <h1>💥 FIM DE JOGO 💥</h1>
       <div class="stats-container">
         <div class="stat-card">
-          <div class="stat-label">Survival Time</div>
+          <div class="stat-label">Tempo de Sobrevivência</div>
           <div class="stat-value" id="time-stat">0.00s</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Song Progress</div>
+          <div class="stat-label">Progresso da Música</div>
           <div class="stat-value" id="progress-stat">0%</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Score</div>
+          <div class="stat-label">Pontuação</div>
           <div class="stat-value" id="score-stat">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Obstacles Dodged</div>
+          <div class="stat-label">Obstáculos Desviados</div>
           <div class="stat-value" id="dodged-stat">0</div>
         </div>
       </div>
-      <button id="restart-btn">🔄 Play Again</button>
+      <button id="restart-btn">🔄 Jogar Novamente</button>
     </div>
 
     <div id="victory-screen" class="hidden">
-      <h1>🎉 VICTORY! 🎉</h1>
-      <p class="subtitle">You completed the entire song!</p>
+      <h1>🎉 VITÓRIA! 🎉</h1>
+      <p class="subtitle">Você completou a música inteira!</p>
       <div class="stats-container">
         <div class="stat-card">
-          <div class="stat-label">Completion Time</div>
+          <div class="stat-label">Tempo de Conclusão</div>
           <div class="stat-value" id="victory-time-stat">0.00s</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Final Score</div>
+          <div class="stat-label">Pontuação Final</div>
           <div class="stat-value" id="victory-score-stat">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Obstacles Dodged</div>
+          <div class="stat-label">Obstáculos Desviados</div>
           <div class="stat-value" id="victory-dodged-stat">0</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Max Combo</div>
-          <div class="stat-value" id="victory-combo-stat">x1</div>
-        </div>
       </div>
-      <button id="victory-restart-btn">🔄 Play Again</button>
+      <button id="victory-restart-btn">🔄 Jogar Novamente</button>
     </div>
   </div>
 
   <!-- HUD Overlay -->
   <div id="hud" class="hidden">
-    <div class="hud-item" id="hud-score">Score: 0</div>
-    <div class="hud-item" id="hud-time">Time: 0.0s</div>
-    <div class="hud-item" id="hud-combo">Combo: x1</div>
+    <div class="hud-item" id="hud-score">Pontuação: 0</div>
+    <div class="hud-item" id="hud-time">Tempo: 0.0s</div>
   </div>
 
   <!-- VR Scene -->

@@ -72,8 +72,8 @@ function startCountdown() {
       countdownNumber.textContent = count;
       gameState.analyser.playBeep(440);
     } else {
-      countdownNumber.textContent = 'GO!';
-      countdownText.textContent = 'Moving forward automatically!';
+      countdownNumber.textContent = 'VAI!';
+      countdownText.textContent = 'Movendo para frente automaticamente!';
       gameState.analyser.playBeep(550);
       
       setTimeout(() => {

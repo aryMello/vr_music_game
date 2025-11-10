@@ -22,16 +22,14 @@ export function showElement(id) {
 export function updateHUD() {
   const scoreEl = document.getElementById('hud-score');
   const timeEl = document.getElementById('hud-time');
-  const comboEl = document.getElementById('hud-combo');
   
-  if (scoreEl) scoreEl.textContent = `Score: ${gameState.score}`;
+  if (scoreEl) scoreEl.textContent = `Pontuação: ${gameState.score}`;
   
   if (timeEl && gameState.startTime) {
     const elapsed = ((Date.now() - gameState.startTime) / 1000).toFixed(1);
-    timeEl.textContent = `Time: ${elapsed}s`;
+    timeEl.textContent = `Tempo: ${elapsed}s`;
   }
   
-  if (comboEl) comboEl.textContent = `Combo: x${gameState.combo}`;
 }
 
 export function showGameOver() {
@@ -67,13 +65,11 @@ export function showVictory() {
   console.log('- Completion time:', survivalTime);
   console.log('- Final score:', gameState.score);
   console.log('- Obstacles dodged:', gameState.dodgedCount);
-  console.log('- Max combo:', gameState.combo);
 
   // Update victory stats
   document.getElementById('victory-time-stat').textContent = survivalTime + 's';
   document.getElementById('victory-score-stat').textContent = gameState.score;
   document.getElementById('victory-dodged-stat').textContent = gameState.dodgedCount;
-  document.getElementById('victory-combo-stat').textContent = 'x' + gameState.combo;
 
   hideElement('hud');
   
