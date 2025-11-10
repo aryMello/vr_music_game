@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VR Music Rhythm Runner</title>
+  <link rel="stylesheet" href="style/styles.css">
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+<body>
+  <!-- UI Overlay -->
+  <div id="ui-overlay">
+    <!-- Mode Selection Screen -->
+    <div id="mode-select">
+      <h1>🎵 VR RHYTHM RUNNER 🎵</h1>
+      <p class="subtitle">Experience music in a whole new dimension</p>
+      
+      <div class="mode-container">
+        <button class="mode-btn" id="vr-mode-btn">
+          <span class="mode-icon">🥽</span>
+          <div class="mode-info">
+            <div class="mode-title">VR Headset Mode</div>
+            <div class="mode-description">Use head movement to dodge obstacles</div>
+            <div class="mode-controls">Mouse look controls only</div>
+          </div>
+        </button>
+        
+        <button class="mode-btn" id="desktop-mode-btn">
+          <span class="mode-icon">🖥️</span>
+          <div class="mode-info">
+            <div class="mode-title">Desktop Mode</div>
+            <div class="mode-description">Use arrow keys to dodge obstacles</div>
+            <div class="mode-controls">← → ↑ ↓ Arrow Keys</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Song Selection Screen -->
+    <div id="song-select" class="hidden">
+      <h1>🎵 SELECT YOUR TRACK 🎵</h1>
+      <p class="subtitle" id="mode-indicator">Mode: Desktop</p>
+      <button class="song-btn" data-song="easy">
+        <span class="icon">🎼</span>
+        <div class="song-info">
+          <div class="song-title">Chill Vibes</div>
+          <div class="song-difficulty">Easy • Relaxed Tempo</div>
+        </div>
+      </button>
+      <button class="song-btn" data-song="medium">
+        <span class="icon">🎸</span>
+        <div class="song-info">
+          <div class="song-title">Rock Energy</div>
+          <div class="song-difficulty">Medium • Dynamic Beats</div>
+        </div>
+      </button>
+      <button class="song-btn" data-song="hard">
+        <span class="icon">⚡</span>
+        <div class="song-info">
+          <div class="song-title">Electronic Storm</div>
+          <div class="song-difficulty">Hard • Intense Rhythm</div>
+        </div>
+      </button>
+    </div>
+
+    <div id="countdown" class="hidden">
+      <div id="countdown-number">3</div>
+      <div id="countdown-text">Get Ready!</div>
+    </div>
+
+    <div id="loading" class="hidden">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Analyzing Music...</div>
+    </div>
+
+    <div id="game-over" class="hidden">
+      <h1>💥 GAME OVER 💥</h1>
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-label">Survival Time</div>
+          <div class="stat-value" id="time-stat">0.00s</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Song Progress</div>
+          <div class="stat-value" id="progress-stat">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Score</div>
+          <div class="stat-value" id="score-stat">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Obstacles Dodged</div>
+          <div class="stat-value" id="dodged-stat">0</div>
+        </div>
+      </div>
+      <button id="restart-btn">🔄 Play Again</button>
+    </div>
+
+    <div id="victory-screen" class="hidden">
+      <h1>🎉 VICTORY! 🎉</h1>
+      <p class="subtitle">You completed the entire song!</p>
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-label">Completion Time</div>
+          <div class="stat-value" id="victory-time-stat">0.00s</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Final Score</div>
+          <div class="stat-value" id="victory-score-stat">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Obstacles Dodged</div>
+          <div class="stat-value" id="victory-dodged-stat">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Max Combo</div>
+          <div class="stat-value" id="victory-combo-stat">x1</div>
+        </div>
+      </div>
+      <button id="victory-restart-btn">🔄 Play Again</button>
+    </div>
+  </div>
+
+  <!-- HUD Overlay -->
+  <div id="hud" class="hidden">
+    <div class="hud-item" id="hud-score">Score: 0</div>
+    <div class="hud-item" id="hud-time">Time: 0.0s</div>
+    <div class="hud-item" id="hud-combo">Combo: x1</div>
+  </div>
+
+  <!-- VR Scene -->
+  <a-scene>
+    <!-- Environment -->
+    <a-sky id="sky" color="#000033"></a-sky>
+    
+    <!-- Camera Rig - VR Mode with automatic forward movement -->
+    <a-entity id="camera-rig" position="0 1.6 0">
+      <a-camera id="player" look-controls="enabled: true" wasd-controls="enabled: false">
+        <!-- Crosshair -->
+        <a-entity 
+          geometry="primitive: ring; radiusInner: 0.015; radiusOuter: 0.025"
+          material="color: #00ffff; shader: flat; opacity: 0.7"
+          position="0 0 -1">
+        </a-entity>
+      </a-camera>
+    </a-entity>
+
+    <!-- Lighting -->
+    <a-entity light="type: ambient; intensity: 0.4; color: #6688ff"></a-entity>
+    <a-entity light="type: directional; intensity: 0.5; color: #ffffff" position="2 4 -3"></a-entity>
+    <a-entity light="type: point; intensity: 0.8; color: #ff00ff; distance: 20" position="0 3 -10" 
+              animation="property: position; to: 0 3 -30; dur: 3000; dir: alternate; loop: true"></a-entity>
+    
+    <!-- Ground Grid -->
+    <a-plane id="ground" position="0 0 -4" rotation="-90 0 0" width="100" height="100" 
+             color="#0a0020" material="transparent: true; opacity: 0.3"></a-plane>
+
+    <!-- Particle System Container -->
+    <a-entity id="particles"></a-entity>
+    
+    <!-- Obstacles Container -->
+    <a-entity id="obstacles"></a-entity>
+  </a-scene>
+
+  <!-- Load modular JavaScript files -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
