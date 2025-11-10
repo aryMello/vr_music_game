@@ -64,7 +64,7 @@ function startCountdown() {
   }
   
   countdownNumber.textContent = count;
-  countdownText.textContent = 'Get Ready! Look around to move';
+  countdownText.textContent = 'Se prepare! Olhe ao redor para se mover';
 
   const interval = setInterval(() => {
     count--;
