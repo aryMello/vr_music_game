@@ -2,21 +2,21 @@
 const CONFIG = {
   songs: {
     easy: {
-      path: '../assets/songs/chill-vibes.mp3',
+      path: './assets/songs/chill-vibes.mp3',
       speed: 0.04,
       spawnRate: 2500,
       obstacleCount: 1,
       beatThreshold: 0.85
     },
     medium: {
-      path: '../assets/songs/rock-energy.mp3',
+      path: './assets/songs/rock-energy.mp3',
       speed: 0.07,
       spawnRate: 1800,
       obstacleCount: 2,
       beatThreshold: 0.80
     },
     hard: {
-      path: '../assets/songs/electronic-storm.mp3',
+      path: './assets/songs/electronic-storm.mp3',
       speed: 0.11,
       spawnRate: 1200,
       obstacleCount: 3,
