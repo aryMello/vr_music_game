@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build outputs
+dist/
+build/
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Audio files (if you want to exclude large music files)
+# Uncomment the line below if your songs are too large for git
+# assets/songs/*.mp3
+# assets/songs/*.wav
+# assets/songs/*.ogg
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Test coverage
+coverage/
+
+# Debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
