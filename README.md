@@ -1,82 +1,106 @@
-# VR Music Rhythm Runner
+# 🎵 VR Rhythm Runner / Corrida Rítmica VR
 
-An immersive VR rhythm game that synchronizes obstacles with your music using real-time beat detection. Dodge obstacles that spawn to the beat of your favorite songs!
+An immersive music rhythm game built with A-Frame that works in both VR and desktop modes. Dodge obstacles to the beat while flying through a neon tunnel!
 
-## Features
+Um jogo de ritmo musical imersivo construído com A-Frame que funciona tanto em VR quanto no desktop. Desvie de obstáculos ao ritmo da música enquanto voa por um túnel neon!
 
-- **Real-time Beat Detection**: Obstacles spawn synchronized with the actual beats of your music using Web Audio API
-- **Audio-Reactive Visuals**: Environment responds to music frequency and energy levels
-- **3 Difficulty Levels**: Easy, Medium, and Hard with different speeds and obstacle counts
-- **VR Support**: Full A-Frame VR compatibility with head tracking
-- **Combo System**: Build combos by surviving longer
-- **Immersive Environment**: 300+ stars, dynamic lighting, and grid floor
-- **Score Tracking**: Time survived, song progress %, score, and obstacles dodged
+![Game Mode](https://img.shields.io/badge/Mode-VR%20%26%20Desktop-blue)
+![A-Frame](https://img.shields.io/badge/A--Frame-1.4.0-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## How It Works
+## Features / Recursos
 
-### Beat Synchronization
-The game uses **Web Audio API** to analyze your MP3 files in real-time:
+- **Dual Mode Support** - Play with VR headset or keyboard
+  - **Suporte Dual** - Jogue com headset VR ou teclado
+- **Head Tracking** - Move by looking around in VR mode
+  - **Rastreamento de Cabeça** - Mova-se olhando ao redor no modo VR
+- **3 Difficulty Levels** - Easy, Medium, and Hard tracks
+  - **3 Níveis de Dificuldade** - Fácil, Médio e Difícil
+- **Real-time Audio Analysis** - Beat detection and visualization
+  - **Análise de Áudio em Tempo Real** - Detecção de batidas e visualização
+- **Dynamic Obstacles** - Procedurally generated shapes
+  - **Obstáculos Dinâmicos** - Formas geradas proceduralmente
+- **Combo System** - Score multiplier for consecutive dodges
+  - **Sistema de Combo** - Multiplicador de pontuação por desvios consecutivos
+- **Immersive Tunnel** - Infinite neon tunnel with reactive visuals
+  - **Túnel Imersivo** - Túnel neon infinito com visuais reativos
 
-1. **Bass Energy Detection**: Analyzes low frequencies (20-250 Hz) to detect drum beats
-2. **Energy Threshold**: Compares current energy to previous values to identify beat peaks
-3. **Beat History**: Prevents multiple detections and ensures proper timing
-4. **Adaptive Spawning**: Obstacles spawn on detected beats, not on a fixed timer
+## Getting Started / Começando
 
-This means the game truly syncs with YOUR music, not a pre-programmed pattern!
+### Prerequisites / Pré-requisitos
 
-### 3. Run the Game
-You need a local web server (browsers block audio file loading from `file://`):
+- Node.js (for running a local server / para executar um servidor local)
+- A modern web browser with WebGL support
+  - Um navegador moderno com suporte a WebGL
+- Optional: VR headset compatible with WebXR
+  - Opcional: Headset VR compatível com WebXR
 
-**Using VS Code:**
-Install "Live Server" extension and click "Go Live"
+### Installation / Instalação
 
-Then open: `http://localhost:8000`
+1. Clone the repository / Clone o repositório:
+```bash
+git clone https://github.com/yourusername/vr-rhythm-runner.git
+cd vr-rhythm-runner
+```
 
-## Gameplay
+2. Install dependencies (if using a package manager) / Instale as dependências:
+```bash
+npm install
+```
 
-1. **Select Song**: Choose your difficulty level
-2. **Loading**: Game analyzes the music for beat detection
-3. **Countdown**: 3... 2... 1... GO!
-4. **Dodge**: Move with WASD and look around to avoid obstacles
-5. **Survive**: Last as long as possible, build combos!
+3. Start a local server / Inicie um servidor local:
+```bash
+npm start
+```
 
-### Controls
-- **Look Around**: Mouse or VR headset
-- **Move**: WASD keys or VR controller
-- **Restart**: Click "Play Again" after game over
+4. Open in browser / Abra no navegador:
+```
+http://localhost:3000
+```
 
-## Visual Features
+## How to Play / Como Jogar
 
-- **Starfield**: 300 animated stars with twinkling effects
-- **Grid Floor**: Cyberpunk-style floor grid
-- **Beat Pulses**: Visual pulse effects on every detected beat
-- **Dynamic Sky**: Sky color changes based on music energy
-- **Glowing Obstacles**: Metallic obstacles with emissive glow effects
-- **HUD**: Real-time score, time, and combo display
+### VR Mode / Modo VR
 
-## Learning Resources
+1. Select "VR Headset Mode" / Selecione "Modo Headset VR"
+2. Choose a difficulty level / Escolha um nível de dificuldade
+3. Put on your VR headset / Coloque seu headset VR
+4. **Look left/right/up/down to move** - Your camera will follow your gaze
+   - **Olhe esquerda/direita/cima/baixo para se mover** - A câmera seguirá seu olhar
+5. Dodge obstacles by moving your head
+   - Desvie dos obstáculos movendo sua cabeça
+6. Try to complete the entire song!
+   - Tente completar a música inteira!
 
-This project demonstrates:
-- Web Audio API for real-time audio analysis
-- A-Frame for WebVR development
-- Beat detection algorithms
-- 3D graphics with Three.js
-- Game state management
-- Collision detection
-- Animation and visual effects
+### Desktop Mode / Modo Desktop
 
-## License
+1. Select "Desktop Mode" / Selecione "Modo Desktop"
+2. Choose a difficulty level / Escolha um nível de dificuldade
+3. Use **Arrow Keys** to move:
+   - **Setas do Teclado** para se mover:
+   - ← Left / Esquerda
+   - → Right / Direita
+   - ↑ Up / Cima
+   - ↓ Down / Baixo
+4. Dodge obstacles and survive!
+   - Desvie dos obstáculos e sobreviva!
 
-Free to use for personal and educational projects!
+## Technologies Used / Tecnologias Utilizadas
 
-## Credits
+- **A-Frame 1.4.0** - WebVR framework
+- **Three.js** - 3D graphics (via A-Frame)
+- **Web Audio API** - Real-time audio analysis
+- **WebXR** - VR device support
 
-Created with:
-- A-Frame VR Framework
-- Web Audio API
-- Pure JavaScript ES6+
-- CSS3 Animations
+## License / Licença
+
+MIT License - Feel free to use and modify!
+Licença MIT - Sinta-se livre para usar e modificar!
+
+## Equipe
+
+@aryMello
 
 ---
 
-**Enjoy your VR music journey!**
+**Enjoy the rhythm! / Aproveite o ritmo!**
