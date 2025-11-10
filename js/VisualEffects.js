@@ -171,12 +171,18 @@ class VisualEffects {
     // Add new rings ahead if needed
     if (this.tunnelRings.length > 0) {
       const lastRing = this.tunnelRings[this.tunnelRings.length - 1];
-      const furthestZ = lastRing.z;
+      let furthestZ = lastRing.z;
       
       // Keep spawning rings to maintain at least 300 units ahead of camera
-      while (furthestZ > cameraZ - 300) {
+      // Add safety limit to prevent infinite loops
+      let ringsCreated = 0;
+      const maxRingsPerFrame = 10;
+      
+      while (furthestZ > cameraZ - 300 && ringsCreated < maxRingsPerFrame && gameState.playing) {
         const newIndex = this.tunnelRings[this.tunnelRings.length - 1].index + 1;
         this.createTunnelRing(newIndex);
+        furthestZ = this.tunnelRings[this.tunnelRings.length - 1].z;
+        ringsCreated++;
       }
     }
   }
