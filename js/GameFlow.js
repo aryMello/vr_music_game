@@ -53,7 +53,7 @@ export async function selectSong(difficulty) {
 function startCountdown() {
   console.log('Starting countdown');
   showElement('countdown');
-  let count = 3;
+  let count = 5;
   
   const countdownNumber = document.getElementById('countdown-number');
   const countdownText = document.getElementById('countdown-text');
@@ -105,6 +105,12 @@ export function startGame() {
   
   gameState.playing = true;
   gameState.startTime = Date.now();
+  
+  // Initialize camping detection tracking
+  gameState.lastPosition = { x: 0, y: 0, time: Date.now() };
+  gameState.isCamping = false;
+  gameState.campingWarningShown = false;
+  
   showElement('hud');
 
   const config = CONFIG.songs[gameState.difficulty];
@@ -170,7 +176,7 @@ export function startGame() {
   gameLoop();
   updateHUD();
   
-  console.log('Game started successfully');
+  console.log('Game started successfully with anti-exploit features enabled');
 }
 
 export function endGame() {

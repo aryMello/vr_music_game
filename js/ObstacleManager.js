@@ -1,5 +1,6 @@
-// ===== Obstacle Management System =====
+// ===== Obstacle Management System (Enhanced with Anti-Exploit) =====
 import gameState from './GameState.js';
+import CONFIG from './config.js';
 import { updateHUD } from './UIManager.js';
 
 class ObstacleManager {
@@ -9,13 +10,15 @@ class ObstacleManager {
     this.config = config;
     this.container = document.querySelector('#obstacles');
     this.spawnInterval = null;
+    this.tunnelRadius = config.tunnelRadius || CONFIG.player.tunnelRadius;
+    this.patternCounter = 0;
     
     if (!this.container) {
       console.error('Obstacles container not found!');
     }
   }
 
-  spawnObstacle() {
+  spawnObstacle(targetPosition = null) {
     const shapes = [
       { primitive: 'box', width: 1, height: 1, depth: 1 },
       { primitive: 'sphere', radius: 0.5 },
@@ -26,17 +29,27 @@ class ObstacleManager {
     const shapeConfig = shapes[Math.floor(Math.random() * shapes.length)];
     const obstacle = document.createElement('a-entity');
     
-    // Get camera position to spawn ahead of player
     const cameraRig = document.querySelector('#camera-rig');
     const cameraZ = cameraRig ? cameraRig.object3D.position.z : 0;
     
-    // Random position within tunnel, spawn ahead of camera
-    const x = (Math.random() - 0.5) * 12;
-    const y = Math.random() * 4 + 0.5;
-    const z = cameraZ - 80; // Spawn 80 units ahead of camera
+    let x, y;
+    
+    if (targetPosition) {
+      // Targeted spawn at player position (camping penalty)
+      x = targetPosition.x + (Math.random() - 0.5) * 2;
+      y = targetPosition.y + (Math.random() - 0.5) * 2;
+    } else {
+      // Normal circular distribution - covers entire tunnel
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * this.tunnelRadius * 0.9; // Stay within 90% of tunnel
+      x = Math.cos(angle) * radius;
+      y = Math.sin(angle) * radius + CONFIG.player.tunnelCenterY;
+    }
+    
+    const z = cameraZ - 80; // Spawn 80 units ahead
     
     const scale = Math.random() * 0.6 + 0.5;
-    const hue = Math.random() * 360;
+    const hue = targetPosition ? 0 : Math.random() * 360; // Red for camping penalty
     
     // Set geometry
     let geometryStr = `primitive: ${shapeConfig.primitive}`;
@@ -57,7 +70,7 @@ class ObstacleManager {
       metalness: 0.7;
       roughness: 0.2;
       emissive: hsl(${hue}, 80%, 40%);
-      emissiveIntensity: 0.5
+      emissiveIntensity: ${targetPosition ? 1.5 : 0.5}
     `);
     obstacle.setAttribute('class', 'obstacle');
     
@@ -78,7 +91,7 @@ class ObstacleManager {
     glow.setAttribute('material', `
       color: hsl(${hue}, 100%, 70%);
       transparent: true;
-      opacity: 0.3;
+      opacity: ${targetPosition ? 0.6 : 0.3};
       shader: flat
     `);
     obstacle.appendChild(glow);
@@ -87,8 +100,48 @@ class ObstacleManager {
     gameState.obstacles.push({
       element: obstacle,
       position: { x, y, z },
-      size: scale
+      size: scale,
+      isCampingPenalty: !!targetPosition
     });
+  }
+
+  spawnPattern() {
+    // Spawn obstacle patterns that cover common camping spots
+    const cameraRig = document.querySelector('#camera-rig');
+    const cameraZ = cameraRig ? cameraRig.object3D.position.z : 0;
+    
+    this.patternCounter++;
+    
+    // Every 5th spawn cycle, create a circular pattern
+    if (this.patternCounter % 5 === 0) {
+      console.log('Spawning circular pattern');
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const radius = this.tunnelRadius * 0.7;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius + CONFIG.player.tunnelCenterY;
+        
+        const obstacle = document.createElement('a-entity');
+        obstacle.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+        obstacle.setAttribute('position', `${x} ${y} ${cameraZ - 80}`);
+        obstacle.setAttribute('material', `
+          color: #ff00ff;
+          metalness: 0.8;
+          roughness: 0.1;
+          emissive: #ff00ff;
+          emissiveIntensity: 0.8
+        `);
+        obstacle.setAttribute('class', 'obstacle');
+        
+        this.container.appendChild(obstacle);
+        gameState.obstacles.push({
+          element: obstacle,
+          position: { x, y, z: cameraZ - 80 },
+          size: 0.4,
+          isPattern: true
+        });
+      }
+    }
   }
 
   updateObstacles() {
@@ -109,11 +162,10 @@ class ObstacleManager {
         `${currentRotation.x + 2} ${currentRotation.y + 1} ${currentRotation.z + 1}`
       );
       
-      // Get camera position to check if obstacle passed player
       const cameraRig = document.querySelector('#camera-rig');
       const cameraZ = cameraRig ? cameraRig.object3D.position.z : 0;
       
-      // Remove obstacles that passed the player (relative to camera)
+      // Remove obstacles that passed the player
       if (obstacle.position.z > cameraZ + 5) {
         obstacle.element.remove();
         gameState.obstacles.splice(i, 1);
@@ -127,12 +179,15 @@ class ObstacleManager {
   }
 
   startSpawning() {
-    console.log('Starting obstacle spawning');
+    console.log('Starting obstacle spawning with anti-exploit features');
     this.spawnInterval = setInterval(() => {
       if (gameState.playing) {
+        // Spawn regular obstacles
         for (let i = 0; i < this.config.obstacleCount; i++) {
           this.spawnObstacle();
         }
+        // Spawn patterns
+        this.spawnPattern();
       }
     }, this.config.spawnRate);
   }
@@ -150,6 +205,7 @@ class ObstacleManager {
     this.stopSpawning();
     gameState.obstacles.forEach(obs => obs.element.remove());
     gameState.obstacles = [];
+    this.patternCounter = 0;
   }
 }
 

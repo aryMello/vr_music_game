@@ -121,10 +121,11 @@
   <div id="hud" class="hidden">
     <div class="hud-item" id="hud-score">Pontuação: 0</div>
     <div class="hud-item" id="hud-time">Tempo: 0.0s</div>
+    <div class="hud-item" id="hud-combo">Combo: x1</div>
   </div>
 
   <!-- VR Scene -->
-  <a-scene>
+  <a-scene loading-screen="enabled: false" vr-mode-ui="enabled: true">
     <!-- Environment -->
     <a-sky id="sky" color="#000033"></a-sky>
     
@@ -145,16 +146,15 @@
     <a-entity light="type: directional; intensity: 0.5; color: #ffffff" position="2 4 -3"></a-entity>
     <a-entity light="type: point; intensity: 0.8; color: #ff00ff; distance: 20" position="0 3 -10" 
               animation="property: position; to: 0 3 -30; dur: 3000; dir: alternate; loop: true"></a-entity>
-    
-    <!-- Ground Grid -->
-    <a-plane id="ground" position="0 0 -4" rotation="-90 0 0" width="100" height="100" 
-             color="#0a0020" material="transparent: true; opacity: 0.3"></a-plane>
 
     <!-- Particle System Container -->
     <a-entity id="particles"></a-entity>
     
     <!-- Obstacles Container -->
     <a-entity id="obstacles"></a-entity>
+
+    <!-- Tunnel Container -->
+    <a-entity id="tunnel"></a-entity>
   </a-scene>
 
   <!-- Load modular JavaScript files -->
