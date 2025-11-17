@@ -160,10 +160,10 @@ class PlayerController {
     
     // Debug logging every 60 frames (once per second at 60fps)
     this.debugCounter++;
-    if (this.debugCounter % 60 === 0 && this.mode === 'vr') {
+    if (this.debugCounter % 120 === 0 && this.mode === 'vr') {
       console.log('VR Tracking:', {
-        camPos: { x: camPos.x.toFixed(2), y: camPos.y.toFixed(2), z: camPos.z.toFixed(2) },
-        camRot: { x: (camRot.x * 180/Math.PI).toFixed(1), y: (camRot.y * 180/Math.PI).toFixed(1), z: (camRot.z * 180/Math.PI).toFixed(1) }
+        camRot: { x: (camRot.x * 180/Math.PI).toFixed(1), y: (camRot.y * 180/Math.PI).toFixed(1) },
+        rigPos: { x: rigPos.x.toFixed(2), y: rigPos.y.toFixed(2) }
       });
     }
     
@@ -183,24 +183,24 @@ class PlayerController {
       playerX = rigPos.x + this.desktopPosition.x;
       playerY = rigPos.y + this.desktopPosition.y;
     } else {
-      // VR mode: Use MORE AGGRESSIVE sensitivity for mobile
-      const sensitivity = 8.0; // Increased from 4.0 for more responsive mobile control
+      // VR mode: Direct, immediate response for smooth tracking
+      const sensitivity = 6.0; // Balanced sensitivity
       
       // Read the camera's local position (6DOF tracking)
       const camLocalX = camPos.x;
       const camLocalY = camPos.y;
       
-      // Horizontal movement: prioritize rotation for mobile gyroscope
+      // Horizontal movement: direct mapping from rotation
       const yaw = camRot.y;
-      const targetX = -Math.sin(yaw) * sensitivity + (camLocalX * 2);
+      const targetX = -Math.sin(yaw) * sensitivity + (camLocalX * 1.5);
       
-      // Vertical movement: prioritize rotation for mobile gyroscope  
+      // Vertical movement: direct mapping from rotation
       const pitch = camRot.x;
-      const targetY = Math.sin(pitch) * sensitivity + (camLocalY * 2);
+      const targetY = Math.sin(pitch) * sensitivity + (camLocalY * 1.5);
       
-      // More aggressive interpolation for mobile (0.2 instead of 0.1)
-      rigPos.x += (targetX - rigPos.x) * 0.2;
-      rigPos.y += (targetY - rigPos.y) * 0.2;
+      // Nearly instant response with minimal smoothing (0.6 = 60% immediate, 40% smoothed)
+      rigPos.x += (targetX - rigPos.x) * 0.6;
+      rigPos.y += (targetY - rigPos.y) * 0.6;
       
       playerX = rigPos.x;
       playerY = rigPos.y + this.tunnelCenterY;
@@ -226,8 +226,9 @@ class PlayerController {
         rigPos.x = this.desktopPosition.x;
         rigPos.y = this.desktopPosition.y;
       } else {
-        rigPos.x = targetX * 0.9 + rigPos.x * 0.1;
-        rigPos.y = (targetY - this.tunnelCenterY) * 0.9 + rigPos.y * 0.1;
+        // VR: faster boundary correction
+        rigPos.x = targetX * 0.7 + rigPos.x * 0.3;
+        rigPos.y = (targetY - this.tunnelCenterY) * 0.7 + rigPos.y * 0.3;
       }
     } else {
       // Update rig position in desktop mode
