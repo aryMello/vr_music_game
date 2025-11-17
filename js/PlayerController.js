@@ -169,16 +169,20 @@ class PlayerController {
       playerX = rigPos.x + this.desktopPosition.x;
       playerY = rigPos.y + this.desktopPosition.y;
     } else {
-      // VR mode: Convert head rotation to position
+      // VR mode: Use BOTH camera position AND rotation for full 6DOF tracking
       const sensitivity = 4.0;
       
-      // Horizontal movement based on yaw (looking left/right)
-      const yaw = camRot.y;
-      const targetX = -Math.sin(yaw) * sensitivity;
+      // Read the camera's local position (this is updated by VR headset tracking)
+      const camLocalX = camPos.x;
+      const camLocalY = camPos.y;
       
-      // Vertical movement based on pitch (looking up/down)
+      // Horizontal movement: combine rotation (looking) with position (leaning)
+      const yaw = camRot.y;
+      const targetX = -Math.sin(yaw) * sensitivity + camLocalX;
+      
+      // Vertical movement: combine rotation (looking) with position (leaning)
       const pitch = camRot.x;
-      const targetY = Math.sin(pitch) * sensitivity;
+      const targetY = Math.sin(pitch) * sensitivity + camLocalY;
       
       // Smooth interpolation
       rigPos.x += (targetX - rigPos.x) * 0.1;
@@ -187,43 +191,6 @@ class PlayerController {
       playerX = rigPos.x;
       playerY = rigPos.y + this.tunnelCenterY;
     }
-    
-    // Constrain player to tunnel boundaries with tighter limit (85%)
-    const safeRadius = this.tunnelRadius * 0.85;
-    const distanceFromCenter = Math.sqrt(
-      Math.pow(playerX, 2) + 
-      Math.pow(playerY - this.tunnelCenterY, 2)
-    );
-    
-    if (distanceFromCenter > safeRadius) {
-      // Push player back inside tunnel smoothly
-      const angle = Math.atan2(playerY - this.tunnelCenterY, playerX);
-      const targetX = Math.cos(angle) * safeRadius;
-      const targetY = Math.sin(angle) * safeRadius + this.tunnelCenterY;
-      
-      // Smooth transition back to tunnel boundary
-      if (this.mode === 'desktop') {
-        this.desktopPosition.x = targetX * 0.9 + this.desktopPosition.x * 0.1;
-        this.desktopPosition.y = (targetY - this.tunnelCenterY) * 0.9 + this.desktopPosition.y * 0.1;
-        rigPos.x = this.desktopPosition.x;
-        rigPos.y = this.desktopPosition.y;
-      } else {
-        rigPos.x = targetX * 0.9 + rigPos.x * 0.1;
-        rigPos.y = (targetY - this.tunnelCenterY) * 0.9 + rigPos.y * 0.1;
-      }
-    } else {
-      // Update rig position in desktop mode
-      if (this.mode === 'desktop') {
-        rigPos.x = this.desktopPosition.x;
-        rigPos.y = this.desktopPosition.y;
-      }
-    }
-    
-    // Apply updated position
-    this.cameraRig.object3D.position.copy(rigPos);
-    
-    // Check for camping behavior
-    this.checkCamping();
   }
 
   getPlayerPosition() {
