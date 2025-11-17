@@ -1,4 +1,4 @@
-// ===== VR Player Controller (Enhanced with Anti-Camping) =====
+// ===== VR Player Controller (Enhanced with Anti-Camping + Mobile VR Fix) =====
 import CONFIG from './config.js';
 import gameState from './GameState.js';
 
@@ -16,8 +16,13 @@ class PlayerController {
     // Desktop mode controls
     this.desktopPosition = { x: 0, y: 0 };
     
+    // VR tracking debug counter
+    this.debugCounter = 0;
+    
     if (this.mode === 'desktop') {
       this.setupDesktopControls();
+    } else {
+      console.log('✅ VR mode active - touch and gyroscope tracking enabled');
     }
   }
 
@@ -153,6 +158,15 @@ class PlayerController {
     const camPos = this.camera.object3D.position;
     const camRot = this.camera.object3D.rotation;
     
+    // Debug logging every 60 frames (once per second at 60fps)
+    this.debugCounter++;
+    if (this.debugCounter % 60 === 0 && this.mode === 'vr') {
+      console.log('VR Tracking:', {
+        camPos: { x: camPos.x.toFixed(2), y: camPos.y.toFixed(2), z: camPos.z.toFixed(2) },
+        camRot: { x: (camRot.x * 180/Math.PI).toFixed(1), y: (camRot.y * 180/Math.PI).toFixed(1), z: (camRot.z * 180/Math.PI).toFixed(1) }
+      });
+    }
+    
     // Automatic forward movement
     rigPos.z -= this.forwardSpeed;
     
@@ -169,28 +183,65 @@ class PlayerController {
       playerX = rigPos.x + this.desktopPosition.x;
       playerY = rigPos.y + this.desktopPosition.y;
     } else {
-      // VR mode: Use BOTH camera position AND rotation for full 6DOF tracking
-      const sensitivity = 4.0;
+      // VR mode: Use MORE AGGRESSIVE sensitivity for mobile
+      const sensitivity = 8.0; // Increased from 4.0 for more responsive mobile control
       
-      // Read the camera's local position (this is updated by VR headset tracking)
+      // Read the camera's local position (6DOF tracking)
       const camLocalX = camPos.x;
       const camLocalY = camPos.y;
       
-      // Horizontal movement: combine rotation (looking) with position (leaning)
+      // Horizontal movement: prioritize rotation for mobile gyroscope
       const yaw = camRot.y;
-      const targetX = -Math.sin(yaw) * sensitivity + camLocalX;
+      const targetX = -Math.sin(yaw) * sensitivity + (camLocalX * 2);
       
-      // Vertical movement: combine rotation (looking) with position (leaning)
+      // Vertical movement: prioritize rotation for mobile gyroscope  
       const pitch = camRot.x;
-      const targetY = Math.sin(pitch) * sensitivity + camLocalY;
+      const targetY = Math.sin(pitch) * sensitivity + (camLocalY * 2);
       
-      // Smooth interpolation
-      rigPos.x += (targetX - rigPos.x) * 0.1;
-      rigPos.y += (targetY - rigPos.y) * 0.1;
+      // More aggressive interpolation for mobile (0.2 instead of 0.1)
+      rigPos.x += (targetX - rigPos.x) * 0.2;
+      rigPos.y += (targetY - rigPos.y) * 0.2;
       
       playerX = rigPos.x;
       playerY = rigPos.y + this.tunnelCenterY;
     }
+    
+    // Constrain player to tunnel boundaries with tighter limit (85%)
+    const safeRadius = this.tunnelRadius * 0.85;
+    const distanceFromCenter = Math.sqrt(
+      Math.pow(playerX, 2) + 
+      Math.pow(playerY - this.tunnelCenterY, 2)
+    );
+    
+    if (distanceFromCenter > safeRadius) {
+      // Push player back inside tunnel smoothly
+      const angle = Math.atan2(playerY - this.tunnelCenterY, playerX);
+      const targetX = Math.cos(angle) * safeRadius;
+      const targetY = Math.sin(angle) * safeRadius + this.tunnelCenterY;
+      
+      // Smooth transition back to tunnel boundary
+      if (this.mode === 'desktop') {
+        this.desktopPosition.x = targetX * 0.9 + this.desktopPosition.x * 0.1;
+        this.desktopPosition.y = (targetY - this.tunnelCenterY) * 0.9 + this.desktopPosition.y * 0.1;
+        rigPos.x = this.desktopPosition.x;
+        rigPos.y = this.desktopPosition.y;
+      } else {
+        rigPos.x = targetX * 0.9 + rigPos.x * 0.1;
+        rigPos.y = (targetY - this.tunnelCenterY) * 0.9 + rigPos.y * 0.1;
+      }
+    } else {
+      // Update rig position in desktop mode
+      if (this.mode === 'desktop') {
+        rigPos.x = this.desktopPosition.x;
+        rigPos.y = this.desktopPosition.y;
+      }
+    }
+    
+    // Apply updated position
+    this.cameraRig.object3D.position.copy(rigPos);
+    
+    // Check for camping behavior
+    this.checkCamping();
   }
 
   getPlayerPosition() {

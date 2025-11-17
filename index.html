@@ -115,6 +115,14 @@
       </div>
       <button id="victory-restart-btn">🔄 Jogar Novamente</button>
     </div>
+
+    <!-- Camping Warning -->
+    <div id="warning-indicator" class="hidden">
+      <div class="warning-content">
+        ⚠️ MOVA-SE! ⚠️
+        <div class="warning-subtitle">Obstáculos penalizadores chegando!</div>
+      </div>
+    </div>
   </div>
 
   <!-- HUD Overlay -->
@@ -131,7 +139,10 @@
     
     <!-- Camera Rig - VR Mode with automatic forward movement -->
     <a-entity id="camera-rig" position="0 1.6 0">
-      <a-camera id="player" look-controls="enabled: true" wasd-controls="enabled: false">
+      <a-camera 
+        id="player" 
+        look-controls="enabled: true; touchEnabled: true; magicWindowTrackingEnabled: true; reverseMouseDrag: false"
+        wasd-controls="enabled: false">
         <!-- Crosshair -->
         <a-entity 
           geometry="primitive: ring; radiusInner: 0.015; radiusOuter: 0.025"
