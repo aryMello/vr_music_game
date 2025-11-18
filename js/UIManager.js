@@ -52,10 +52,31 @@ export function showGameOver() {
   hideElement('hud');
   
   const overlay = document.getElementById('ui-overlay');
-  if (overlay) overlay.classList.remove('fade-out');
+  if (overlay) {
+    overlay.classList.remove('fade-out');
+    // Ensure overlay is clickable in VR
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.zIndex = '10000';
+  }
+  
+  const gameOverScreen = document.getElementById('game-over');
+  if (gameOverScreen) {
+    // Force game over to be visible and clickable
+    gameOverScreen.style.display = 'block';
+    gameOverScreen.style.pointerEvents = 'auto';
+    gameOverScreen.style.zIndex = '10001';
+  }
+  
+  const restartBtn = document.getElementById('restart-btn');
+  if (restartBtn) {
+    restartBtn.style.pointerEvents = 'auto';
+    restartBtn.style.zIndex = '10002';
+  }
   
   showElement('ui-overlay');
   showElement('game-over');
+  
+  console.log('✅ Game Over screen should now be visible and clickable');
 }
 
 export function showVictory() {
@@ -74,8 +95,29 @@ export function showVictory() {
   hideElement('hud');
   
   const overlay = document.getElementById('ui-overlay');
-  if (overlay) overlay.classList.remove('fade-out');
+  if (overlay) {
+    overlay.classList.remove('fade-out');
+    // Ensure overlay is clickable in VR
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.zIndex = '10000';
+  }
+  
+  const victoryScreen = document.getElementById('victory-screen');
+  if (victoryScreen) {
+    // Force victory screen to be visible and clickable
+    victoryScreen.style.display = 'block';
+    victoryScreen.style.pointerEvents = 'auto';
+    victoryScreen.style.zIndex = '10001';
+  }
+  
+  const restartBtn = document.getElementById('victory-restart-btn');
+  if (restartBtn) {
+    restartBtn.style.pointerEvents = 'auto';
+    restartBtn.style.zIndex = '10002';
+  }
   
   showElement('ui-overlay');
   showElement('victory-screen');
+  
+  console.log('✅ Victory screen should now be visible and clickable');
 }

@@ -86,27 +86,46 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (overlay) {
         overlay.style.zIndex = '10000';
-        overlay.style.pointerEvents = 'none';
+        // DON'T disable pointer events on the overlay itself
+        // overlay.style.pointerEvents = 'none';
       }
       
       if (hud) {
         hud.style.zIndex = '9999';
       }
       
-      // Make sure game over and victory screens are clickable in VR
+      // Make sure ALL interactive elements are clickable
       const gameOver = document.getElementById('game-over');
       const victory = document.getElementById('victory-screen');
       const modeSelect = document.getElementById('mode-select');
       const songSelect = document.getElementById('song-select');
       const countdown = document.getElementById('countdown');
       const loading = document.getElementById('loading');
+      const restartBtn = document.getElementById('restart-btn');
+      const victoryRestartBtn = document.getElementById('victory-restart-btn');
       
-      if (gameOver) gameOver.style.pointerEvents = 'auto';
-      if (victory) victory.style.pointerEvents = 'auto';
+      if (gameOver) {
+        gameOver.style.pointerEvents = 'auto';
+        gameOver.style.zIndex = '10001';
+      }
+      if (victory) {
+        victory.style.pointerEvents = 'auto';
+        victory.style.zIndex = '10001';
+      }
       if (modeSelect) modeSelect.style.pointerEvents = 'auto';
       if (songSelect) songSelect.style.pointerEvents = 'auto';
       if (countdown) countdown.style.pointerEvents = 'auto';
       if (loading) loading.style.pointerEvents = 'auto';
+      if (restartBtn) {
+        restartBtn.style.pointerEvents = 'auto';
+        restartBtn.style.zIndex = '10002';
+      }
+      if (victoryRestartBtn) {
+        victoryRestartBtn.style.pointerEvents = 'auto';
+        victoryRestartBtn.style.zIndex = '10002';
+      }
+      
+      console.log('✅ VR mode UI adjustments complete - buttons should be clickable');
     });
     
     // Listen for VR mode exit
@@ -123,6 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (hud) {
         hud.style.zIndex = '999';
       }
+      
+      // Reset z-index for screens
+      const gameOver = document.getElementById('game-over');
+      const victory = document.getElementById('victory-screen');
+      if (gameOver) gameOver.style.zIndex = '';
+      if (victory) victory.style.zIndex = '';
     });
   } else {
     console.error('A-Frame scene not found - VR detection unavailable');
