@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectSong(song);
     });
   });
-
+  
   // Restart button (Game Over)
   const restartBtn = document.getElementById('restart-btn');
   if (restartBtn) {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.error('Restart button not found');
   }
-
+  
   // Victory restart button
   const victoryRestartBtn = document.getElementById('victory-restart-btn');
   if (victoryRestartBtn) {
@@ -73,4 +73,58 @@ document.addEventListener('DOMContentLoaded', () => {
   
   console.log('=== Game initialization complete ===');
   console.log('Select a mode to begin!');
+  
+  // ===== VR MODE DETECTION =====
+  const scene = document.querySelector('a-scene');
+  
+  if (scene) {
+    // Listen for VR mode enter
+    scene.addEventListener('enter-vr', () => {
+      console.log('🥽 Entered VR mode - adjusting UI');
+      const overlay = document.getElementById('ui-overlay');
+      const hud = document.getElementById('hud');
+      
+      if (overlay) {
+        overlay.style.zIndex = '10000';
+        overlay.style.pointerEvents = 'none';
+      }
+      
+      if (hud) {
+        hud.style.zIndex = '9999';
+      }
+      
+      // Make sure game over and victory screens are clickable in VR
+      const gameOver = document.getElementById('game-over');
+      const victory = document.getElementById('victory-screen');
+      const modeSelect = document.getElementById('mode-select');
+      const songSelect = document.getElementById('song-select');
+      const countdown = document.getElementById('countdown');
+      const loading = document.getElementById('loading');
+      
+      if (gameOver) gameOver.style.pointerEvents = 'auto';
+      if (victory) victory.style.pointerEvents = 'auto';
+      if (modeSelect) modeSelect.style.pointerEvents = 'auto';
+      if (songSelect) songSelect.style.pointerEvents = 'auto';
+      if (countdown) countdown.style.pointerEvents = 'auto';
+      if (loading) loading.style.pointerEvents = 'auto';
+    });
+    
+    // Listen for VR mode exit
+    scene.addEventListener('exit-vr', () => {
+      console.log('🖥️ Exited VR mode - resetting UI');
+      const overlay = document.getElementById('ui-overlay');
+      const hud = document.getElementById('hud');
+      
+      if (overlay) {
+        overlay.style.zIndex = '1000';
+        overlay.style.pointerEvents = '';
+      }
+      
+      if (hud) {
+        hud.style.zIndex = '999';
+      }
+    });
+  } else {
+    console.error('A-Frame scene not found - VR detection unavailable');
+  }
 });

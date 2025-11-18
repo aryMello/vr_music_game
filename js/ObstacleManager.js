@@ -12,6 +12,7 @@ class ObstacleManager {
     this.spawnInterval = null;
     this.tunnelRadius = config.tunnelRadius || CONFIG.player.tunnelRadius;
     this.patternCounter = 0;
+    this.lastDodgeTime = Date.now();
     
     if (!this.container) {
       console.error('Obstacles container not found!');
@@ -148,6 +149,7 @@ class ObstacleManager {
     if (!gameState.playing) return;
 
     const speed = this.config.speed;
+    const now = Date.now();
     
     for (let i = gameState.obstacles.length - 1; i >= 0; i--) {
       const obstacle = gameState.obstacles[i];
@@ -169,10 +171,26 @@ class ObstacleManager {
       if (obstacle.position.z > cameraZ + 5) {
         obstacle.element.remove();
         gameState.obstacles.splice(i, 1);
+        
+        // Award points and update combo
         gameState.score += 10 * gameState.combo;
         gameState.dodgedCount++;
+        this.lastDodgeTime = now;
+        
+        // Increase combo (max 10x)
+        if (gameState.combo < 10) {
+          gameState.combo++;
+        }
+        
         updateHUD();
       }
+    }
+
+    // Combo timeout: Reset combo if no dodge for 3 seconds
+    if (now - this.lastDodgeTime > 3000 && gameState.combo > 1) {
+      console.log('Combo reset due to inactivity');
+      gameState.combo = 1;
+      updateHUD();
     }
 
     requestAnimationFrame(() => this.updateObstacles());
@@ -180,6 +198,8 @@ class ObstacleManager {
 
   startSpawning() {
     console.log('Starting obstacle spawning with anti-exploit features');
+    this.lastDodgeTime = Date.now(); // Initialize dodge timer
+    
     this.spawnInterval = setInterval(() => {
       if (gameState.playing) {
         // Spawn regular obstacles

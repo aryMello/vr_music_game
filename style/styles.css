@@ -191,6 +191,10 @@ h1 {
 }
 
 /* Game Over */
+#game-over {
+  text-align: center;
+}
+
 #game-over h1 {
   margin-bottom: 40px;
   animation: gameOverShake 0.5s ease;
@@ -263,6 +267,45 @@ h1 {
   box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
 }
 
+/* Victory Screen */
+#victory-screen {
+  text-align: center;
+  animation: victoryBounce 0.8s ease;
+}
+
+#victory-screen h1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+  animation: victoryGlow 1s infinite alternate;
+  margin-bottom: 20px;
+}
+
+@keyframes victoryBounce {
+  0% { 
+    transform: scale(0.3) rotate(-10deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes victoryGlow {
+  from {
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+  }
+  to {
+    text-shadow: 0 0 60px rgba(255, 215, 0, 1);
+  }
+}
+
 #victory-restart-btn {
   padding: 18px 50px;
   font-size: 22px;
@@ -290,6 +333,7 @@ h1 {
   left: 20px;
   z-index: 999;
   font-family: 'Courier New', monospace;
+  pointer-events: none;
 }
 
 .hud-item {
@@ -304,47 +348,6 @@ h1 {
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
   backdrop-filter: blur(5px);
   min-width: 180px;
-}
-
-/* Utility Classes */
-.hidden {
-  display: none !important;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 36px;
-  }
-
-  .song-btn {
-    width: 90%;
-    padding: 20px;
-  }
-
-  .song-btn .icon {
-    font-size: 36px;
-  }
-
-  .song-title {
-    font-size: 20px;
-  }
-
-  .stats-container {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  #countdown-number {
-    font-size: 120px;
-  }
-}
-
-/* VR-specific adjustments */
-@media (display-mode: standalone) {
-  #hud {
-    display: none;
-  }
 }
 
 /* Mode Selection Screen */
@@ -412,4 +415,51 @@ h1 {
   font-size: 18px;
   margin-bottom: 20px;
   font-weight: bold;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 36px;
+  }
+
+  .song-btn {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .song-btn .icon {
+    font-size: 36px;
+  }
+
+  .song-title {
+    font-size: 20px;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  #countdown-number {
+    font-size: 120px;
+  }
+  
+  #hud .hud-item {
+    font-size: 14px;
+    padding: 8px 15px;
+    min-width: 140px;
+  }
+}
+
+/* VR-specific adjustments */
+@media (display-mode: standalone) {
+  #hud {
+    display: none;
+  }
 }
