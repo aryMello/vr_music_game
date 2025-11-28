@@ -1,12 +1,13 @@
 // ===== Game Flow Management =====
-import CONFIG from './config.js';
-import gameState from './GameState.js';
-import AudioAnalyzer from './AudioAnalyzer.js';
-import PlayerController from './PlayerController.js';
-import VisualEffects from './VisualEffects.js';
-import ObstacleManager from './ObstacleManager.js';
-import CollisionDetector from './CollisionDetector.js';
-import { hideElement, showElement, updateHUD, showGameOver, showVictory } from './UIManager.js';
+import CONFIG from '../core/config.js';
+import gameState from '../core/GameState.js';
+import AudioAnalyzer from '../systems/AudioAnalyzer.js';
+import PlayerController from '../systems/PlayerController.js';
+import VisualEffects from '../systems/VisualEffects.js';
+import ObstacleManager from '../systems/ObstacleManager.js';
+import CollisionDetector from '../systems/CollisionDetector.js';
+import { hideElement, showElement, updateHUD, showGameOver, showVictory } from '../ui/UIManager.js';
+import scoreIntegration from '../integration/ScoreIntegration.js';
 
 export async function selectSong(difficulty) {
   console.log('=== SONG SELECTED ===');
@@ -97,11 +98,12 @@ export function startGame() {
   console.log('=== STARTING GAME ===');
   console.log('Mode:', gameState.mode);
   
-  if (gameState.mode === 'desktop') {
-    console.log('Desktop Mode: Use Arrow Keys to dodge');
-  } else {
+  // DESKTOP MODE DISABLED - Only VR mode is active
+  // if (gameState.mode === 'desktop') {
+  //   console.log('Desktop Mode: Use Arrow Keys to dodge');
+  // } else {
     console.log('VR Mode: Use head movement to dodge');
-  }
+  // }
   
   gameState.playing = true;
   gameState.startTime = Date.now();
@@ -194,6 +196,10 @@ export function endGame() {
   if (gameState.analyser) {
     gameState.analyser.playGameOverSound();
   }
+
+  // Save score to server
+  console.log('Attempting to save score:', Math.round(gameState.score));
+  scoreIntegration.saveScore(Math.round(gameState.score));
 }
 
 export function victoryGame() {
@@ -211,4 +217,8 @@ export function victoryGame() {
   if (gameState.analyser) {
     gameState.analyser.playVictorySound();
   }
+
+  // Save score to server
+  console.log('Attempting to save victory score:', Math.round(gameState.score));
+  scoreIntegration.saveScore(Math.round(gameState.score));
 }

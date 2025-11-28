@@ -1,8 +1,9 @@
 // ===== Main Entry Point =====
 // This file initializes the game and sets up event listeners
-import gameState from './GameState.js';
-import { selectSong } from './GameFlow.js';
-import { showElement, hideElement } from './UIManager.js';
+import gameState from './core/GameState.js';
+import { selectSong } from './game/GameFlow.js';
+import { showElement, hideElement } from './ui/UIManager.js';
+import scoreIntegration from './integration/ScoreIntegration.js';
 
 console.log('=== VR RHYTHM RUNNER ===');
 console.log('Main entry point loaded');
@@ -10,9 +11,12 @@ console.log('Main entry point loaded');
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM Content Loaded - Initializing game');
   
+  // Initialize score integration (extract code from URL)
+  scoreIntegration.init();
+  
   // Mode selection buttons
   const vrModeBtn = document.getElementById('vr-mode-btn');
-  const desktopModeBtn = document.getElementById('desktop-mode-btn');
+  // const desktopModeBtn = document.getElementById('desktop-mode-btn');
   
   if (vrModeBtn) {
     vrModeBtn.addEventListener('click', () => {
@@ -24,15 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  if (desktopModeBtn) {
-    desktopModeBtn.addEventListener('click', () => {
-      console.log('Desktop Mode selected');
-      gameState.mode = 'desktop';
-      hideElement('mode-select');
-      showElement('song-select');
-      document.getElementById('mode-indicator').textContent = 'Mode: Desktop 🖥️ (Arrow Keys)';
-    });
-  }
+  // DESKTOP MODE DISABLED - Only VR Mode is active
+  // if (desktopModeBtn) {
+  //   desktopModeBtn.addEventListener('click', () => {
+  //     console.log('Desktop Mode selected');
+  //     gameState.mode = 'desktop';
+  //     hideElement('mode-select');
+  //     showElement('song-select');
+  //     document.getElementById('mode-indicator').textContent = 'Mode: Desktop 🖥️ (Arrow Keys)';
+  //   });
+  // }
   
   // Song selection buttons
   const songButtons = document.querySelectorAll('.song-btn');

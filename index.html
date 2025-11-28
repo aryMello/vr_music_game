@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VR Rhythm Runner</title>
-  <link rel="stylesheet" href="style/styles.css">
+  <link rel="stylesheet" href="./style/styles.css">
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 </head>
 <body>
@@ -25,6 +25,8 @@
           </div>
         </button>
         
+        <!-- DESKTOP MODE DISABLED - Only VR Mode is active -->
+        <!-- 
         <button class="mode-btn" id="desktop-mode-btn">
           <span class="mode-icon">🖥️</span>
           <div class="mode-info">
@@ -33,13 +35,14 @@
             <div class="mode-controls">← → ↑ ↓ Setas do Teclado</div>
           </div>
         </button>
+        -->
       </div>
     </div>
 
     <!-- Tela de Seleção de Música -->
     <div id="song-select" class="hidden">
       <h1>🎵 ESCOLHA SUA MÚSICA 🎵</h1>
-      <p class="subtitle" id="mode-indicator">Modo: Desktop</p>
+      <p class="subtitle" id="mode-indicator">Modo: VR</p>
       <button class="song-btn" data-song="easy">
         <span class="icon">🎼</span>
         <div class="song-info">
@@ -161,6 +164,6 @@
   </a-scene>
 
   <!-- Load modular JavaScript files -->
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>

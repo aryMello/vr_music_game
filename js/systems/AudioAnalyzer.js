@@ -1,5 +1,5 @@
 // ===== Audio Analysis System =====
-import gameState from './GameState.js';
+import gameState from '../core/GameState.js';
 
 class AudioAnalyzer {
   constructor() {

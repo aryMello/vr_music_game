@@ -1,7 +1,7 @@
 // ===== Obstacle Management System (Enhanced with Anti-Exploit) =====
-import gameState from './GameState.js';
-import CONFIG from './config.js';
-import { updateHUD } from './UIManager.js';
+import gameState from '../core/GameState.js';
+import CONFIG from '../core/config.js';
+import { updateHUD } from '../ui/UIManager.js';
 
 class ObstacleManager {
   constructor(scene, config) {
@@ -172,8 +172,10 @@ class ObstacleManager {
         obstacle.element.remove();
         gameState.obstacles.splice(i, 1);
         
-        // Award points and update combo
-        gameState.score += 10 * gameState.combo;
+        // Award points and update combo (capped at 1000 max)
+        // Base: 1 point per obstacle, max 1 point per dodge (no decimal bonus)
+        const pointsEarned = 1;
+        gameState.score = Math.min(gameState.score + pointsEarned, 1000);
         gameState.dodgedCount++;
         this.lastDodgeTime = now;
         

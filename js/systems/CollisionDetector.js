@@ -1,8 +1,8 @@
 // ===== Collision Detection System =====
-import CONFIG from './config.js';
-import gameState from './GameState.js';
-import { endGame } from './GameFlow.js';
-import { updateHUD } from './UIManager.js';
+import CONFIG from '../core/config.js';
+import gameState from '../core/GameState.js';
+import { endGame } from '../game/GameFlow.js';
+import { updateHUD } from '../ui/UIManager.js';
 
 class CollisionDetector {
   constructor() {

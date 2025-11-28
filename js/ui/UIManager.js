@@ -1,5 +1,5 @@
 // ===== UI Management =====
-import gameState from './GameState.js';
+import gameState from '../core/GameState.js';
 
 export function hideElement(id) {
   const el = document.getElementById(id);
@@ -24,7 +24,7 @@ export function updateHUD() {
   const timeEl = document.getElementById('hud-time');
   const comboEl = document.getElementById('hud-combo');
   
-  if (scoreEl) scoreEl.textContent = `Pontuação: ${gameState.score}`;
+  if (scoreEl) scoreEl.textContent = `Pontuação: ${Math.round(gameState.score)}`;
   if (comboEl) comboEl.textContent = `Combo: x${gameState.combo}`;
   
   if (timeEl && gameState.startTime) {
@@ -46,7 +46,7 @@ export function showGameOver() {
   
   document.getElementById('time-stat').textContent = survivalTime + 's';
   document.getElementById('progress-stat').textContent = progress + '%';
-  document.getElementById('score-stat').textContent = gameState.score;
+  document.getElementById('score-stat').textContent = Math.round(gameState.score);
   document.getElementById('dodged-stat').textContent = gameState.dodgedCount;
   
   hideElement('hud');
@@ -89,7 +89,7 @@ export function showVictory() {
   
   // Update victory stats
   document.getElementById('victory-time-stat').textContent = survivalTime + 's';
-  document.getElementById('victory-score-stat').textContent = gameState.score;
+  document.getElementById('victory-score-stat').textContent = Math.round(gameState.score);
   document.getElementById('victory-dodged-stat').textContent = gameState.dodgedCount;
   
   hideElement('hud');

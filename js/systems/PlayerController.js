@@ -1,6 +1,6 @@
 // ===== VR Player Controller (Enhanced with Anti-Camping + Mobile VR Fix) =====
-import CONFIG from './config.js';
-import gameState from './GameState.js';
+import CONFIG from '../core/config.js';
+import gameState from '../core/GameState.js';
 
 class PlayerController {
   constructor(mode = 'vr') {
@@ -13,57 +13,61 @@ class PlayerController {
     this.tunnelRadius = CONFIG.player.tunnelRadius;
     this.tunnelCenterY = CONFIG.player.tunnelCenterY;
     
-    // Desktop mode controls
-    this.desktopPosition = { x: 0, y: 0 };
+    // Desktop mode controls - DISABLED
+    // this.desktopPosition = { x: 0, y: 0 };
+    this.desktopPosition = { x: 0, y: 0 }; // Keep for reference but not used
     
     // VR tracking debug counter
     this.debugCounter = 0;
     
-    if (this.mode === 'desktop') {
-      this.setupDesktopControls();
-    } else {
+    // DESKTOP MODE DISABLED - Only VR mode is active
+    // if (this.mode === 'desktop') {
+    //   this.setupDesktopControls();
+    // } else {
       console.log('✅ VR mode active - touch and gyroscope tracking enabled');
-    }
+    // }
   }
 
-  setupDesktopControls() {
-    console.log('Setting up desktop arrow key controls');
-    
-    this.activeKeys = new Set();
-    
-    document.addEventListener('keydown', (e) => {
-      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
-        e.preventDefault();
-        this.activeKeys.add(e.key);
-      }
-    });
-    
-    document.addEventListener('keyup', (e) => {
-      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
-        e.preventDefault();
-        this.activeKeys.delete(e.key);
-      }
-    });
-    
-    console.log('✅ Desktop controls enabled: Use Arrow Keys to move');
-  }
+  // DESKTOP MODE DISABLED - setupDesktopControls method is no longer called
+  // setupDesktopControls() {
+  //   console.log('Setting up desktop arrow key controls');
+  //   
+  //   this.activeKeys = new Set();
+  //   
+  //   document.addEventListener('keydown', (e) => {
+  //     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+  //       e.preventDefault();
+  //       this.activeKeys.add(e.key);
+  //     }
+  //   });
+  //   
+  //   document.addEventListener('keyup', (e) => {
+  //     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+  //       e.preventDefault();
+  //       this.activeKeys.delete(e.key);
+  //     }
+  //   });
+  //   
+  //   console.log('✅ Desktop controls enabled: Use Arrow Keys to move');
+  // }
 
-  updateDesktopMovement() {
-    const moveSpeed = 0.08;
-    
-    if (this.activeKeys.has('ArrowLeft')) {
-      this.desktopPosition.x -= moveSpeed;
-    }
-    if (this.activeKeys.has('ArrowRight')) {
-      this.desktopPosition.x += moveSpeed;
-    }
-    if (this.activeKeys.has('ArrowUp')) {
-      this.desktopPosition.y += moveSpeed;
-    }
-    if (this.activeKeys.has('ArrowDown')) {
-      this.desktopPosition.y -= moveSpeed;
-    }
-  }
+  // DESKTOP MODE DISABLED - updateDesktopMovement is no longer called
+  // updateDesktopMovement() {
+  //   const moveSpeed = 0.08;
+  //   
+  //   if (this.activeKeys.has('ArrowLeft')) {
+  //     this.desktopPosition.x -= moveSpeed;
+  //   }
+  //   if (this.activeKeys.has('ArrowRight')) {
+  //     this.desktopPosition.x += moveSpeed;
+  //   }
+  //   if (this.activeKeys.has('ArrowUp')) {
+  //     this.desktopPosition.y += moveSpeed;
+  //   }
+  //   if (this.activeKeys.has('ArrowDown')) {
+  //     this.desktopPosition.y -= moveSpeed;
+  //   }
+  // }
 
   checkCamping() {
     const currentPos = this.getPlayerPosition();
@@ -133,11 +137,11 @@ class PlayerController {
       this.camera.setAttribute('wasd-controls', 'enabled: false');
     }
     
-    // In desktop mode, disable mouse look
-    if (this.mode === 'desktop' && this.camera) {
-      this.camera.setAttribute('look-controls', 'enabled: false');
-      console.log('Mouse look disabled for desktop mode');
-    }
+    // In desktop mode, disable mouse look - DESKTOP MODE DISABLED
+    // if (this.mode === 'desktop' && this.camera) {
+    //   this.camera.setAttribute('look-controls', 'enabled: false');
+    //   console.log('Mouse look disabled for desktop mode');
+    // }
     
     this.updateInterval = setInterval(() => this.update(), 16); // ~60fps
   }
@@ -170,41 +174,42 @@ class PlayerController {
     // Automatic forward movement
     rigPos.z -= this.forwardSpeed;
     
-    // Update desktop movement if in desktop mode
-    if (this.mode === 'desktop') {
-      this.updateDesktopMovement();
-    }
+    // Update desktop movement if in desktop mode - DESKTOP MODE DISABLED
+    // if (this.mode === 'desktop') {
+    //   this.updateDesktopMovement();
+    // }
     
     // Get player position based on mode
     let playerX, playerY;
     
-    if (this.mode === 'desktop') {
-      // Desktop mode: use arrow key position
-      playerX = rigPos.x + this.desktopPosition.x;
-      playerY = rigPos.y + this.desktopPosition.y;
-    } else {
-      // VR mode: Direct, immediate response for smooth tracking
-      const sensitivity = 6.0; // Balanced sensitivity
-      
-      // Read the camera's local position (6DOF tracking)
-      const camLocalX = camPos.x;
-      const camLocalY = camPos.y;
-      
-      // Horizontal movement: direct mapping from rotation
-      const yaw = camRot.y;
-      const targetX = -Math.sin(yaw) * sensitivity + (camLocalX * 1.5);
-      
-      // Vertical movement: direct mapping from rotation
-      const pitch = camRot.x;
-      const targetY = Math.sin(pitch) * sensitivity + (camLocalY * 1.5);
-      
-      // Nearly instant response with minimal smoothing (0.6 = 60% immediate, 40% smoothed)
-      rigPos.x += (targetX - rigPos.x) * 0.6;
-      rigPos.y += (targetY - rigPos.y) * 0.6;
-      
-      playerX = rigPos.x;
-      playerY = rigPos.y + this.tunnelCenterY;
-    }
+    // DESKTOP MODE DISABLED - Only VR mode is active
+    // if (this.mode === 'desktop') {
+    //   // Desktop mode: use arrow key position
+    //   playerX = rigPos.x + this.desktopPosition.x;
+    //   playerY = rigPos.y + this.desktopPosition.y;
+    // } else {
+    // VR mode: Direct, immediate response for smooth tracking (ALWAYS ACTIVE)
+    const sensitivity = 6.0; // Balanced sensitivity
+    
+    // Read the camera's local position (6DOF tracking)
+    const camLocalX = camPos.x;
+    const camLocalY = camPos.y;
+    
+    // Horizontal movement: direct mapping from rotation
+    const yaw = camRot.y;
+    const targetX = -Math.sin(yaw) * sensitivity + (camLocalX * 1.5);
+    
+    // Vertical movement: direct mapping from rotation
+    const pitch = camRot.x;
+    const targetY = Math.sin(pitch) * sensitivity + (camLocalY * 1.5);
+    
+    // Nearly instant response with minimal smoothing (0.6 = 60% immediate, 40% smoothed)
+    rigPos.x += (targetX - rigPos.x) * 0.6;
+    rigPos.y += (targetY - rigPos.y) * 0.6;
+    
+    playerX = rigPos.x;
+    playerY = rigPos.y + this.tunnelCenterY;
+    // }
     
     // Constrain player to tunnel boundaries with tighter limit (85%)
     const safeRadius = this.tunnelRadius * 0.85;
@@ -220,24 +225,26 @@ class PlayerController {
       const targetY = Math.sin(angle) * safeRadius + this.tunnelCenterY;
       
       // Smooth transition back to tunnel boundary
-      if (this.mode === 'desktop') {
-        this.desktopPosition.x = targetX * 0.9 + this.desktopPosition.x * 0.1;
-        this.desktopPosition.y = (targetY - this.tunnelCenterY) * 0.9 + this.desktopPosition.y * 0.1;
-        rigPos.x = this.desktopPosition.x;
-        rigPos.y = this.desktopPosition.y;
-      } else {
-        // VR: faster boundary correction
+      // DESKTOP MODE DISABLED - only VR boundary correction is active
+      // if (this.mode === 'desktop') {
+      //   this.desktopPosition.x = targetX * 0.9 + this.desktopPosition.x * 0.1;
+      //   this.desktopPosition.y = (targetY - this.tunnelCenterY) * 0.9 + this.desktopPosition.y * 0.1;
+      //   rigPos.x = this.desktopPosition.x;
+      //   rigPos.y = this.desktopPosition.y;
+      // } else {
+        // VR: faster boundary correction (ALWAYS ACTIVE)
         rigPos.x = targetX * 0.7 + rigPos.x * 0.3;
         rigPos.y = (targetY - this.tunnelCenterY) * 0.7 + rigPos.y * 0.3;
-      }
-    } else {
-      // Update rig position in desktop mode
-      if (this.mode === 'desktop') {
-        rigPos.x = this.desktopPosition.x;
-        rigPos.y = this.desktopPosition.y;
-      }
-    }
+      // }
+    // } else {
+      // Update rig position in desktop mode - DESKTOP MODE DISABLED
+      // if (this.mode === 'desktop') {
+      //   rigPos.x = this.desktopPosition.x;
+      //   rigPos.y = this.desktopPosition.y;
+      // }
+    // }
     
+    }
     // Apply updated position
     this.cameraRig.object3D.position.copy(rigPos);
     
@@ -253,19 +260,19 @@ class PlayerController {
     const rigPos = this.cameraRig.object3D.position;
     const camPos = this.camera.object3D.position;
     
-    if (this.mode === 'desktop') {
-      return {
-        x: rigPos.x + this.desktopPosition.x,
-        y: rigPos.y + this.desktopPosition.y,
-        z: rigPos.z + camPos.z
-      };
-    } else {
-      return {
-        x: rigPos.x,
-        y: rigPos.y + this.tunnelCenterY,
-        z: rigPos.z + camPos.z
-      };
-    }
+    // DESKTOP MODE DISABLED - Only VR mode is active
+    // if (this.mode === 'desktop') {
+    //   return {
+    //     x: rigPos.x + this.desktopPosition.x,
+    //     y: rigPos.y + this.desktopPosition.y,
+    //     z: rigPos.z + camPos.z
+    //   };
+    // } else {
+    return {
+      x: rigPos.x,
+      y: rigPos.y + this.tunnelCenterY,
+      z: rigPos.z + camPos.z
+    };
   }
 
   reset() {

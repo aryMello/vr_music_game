@@ -1,6 +1,6 @@
 // ===== Visual Effects System =====
-import CONFIG from './config.js';
-import gameState from './GameState.js';
+import CONFIG from '../core/config.js';
+import gameState from '../core/GameState.js';
 
 class VisualEffects {
   constructor(scene) {
