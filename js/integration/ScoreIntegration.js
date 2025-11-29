@@ -96,6 +96,7 @@ class ScoreIntegration {
     try {
       // Get user ID first
       const userId = await this.getUserId();
+      // it was userC before which it was wrong 
       
       if (!userId) {
         throw new Error("Failed to get user ID");
