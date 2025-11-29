@@ -9,7 +9,7 @@ class ScoreIntegration {
   constructor() {
     this.userCode = null;
     this.userId = null;
-    this.apiBaseUrl = "https://upgraded-happiness-9rvrr9w9ppj3v64-3000.app.github.dev";
+    this.apiBaseUrl = "https://base-presentation-vrar.onrender.com/";
     this.experienceId = 1;
     this.redirectDelay = 10000; // 10 seconds
     
