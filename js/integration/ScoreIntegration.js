@@ -1,5 +1,5 @@
 // ========================================
-// SCORE INTEGRATION MODULE
+// SCORE INTEGRATION MODULE - VERSÃO CORRIGIDA
 // Handles user authentication and score submission
 // ========================================
 
@@ -94,9 +94,8 @@ class ScoreIntegration {
     Utils.logInfo(`📊 Saving score: ${score}`);
     
     try {
-      // Get user ID first
+      // ✅ CORREÇÃO: userC -> userId
       const userId = await this.getUserId();
-      // it was userC before which it was wrong 
       
       if (!userId) {
         throw new Error("Failed to get user ID");
